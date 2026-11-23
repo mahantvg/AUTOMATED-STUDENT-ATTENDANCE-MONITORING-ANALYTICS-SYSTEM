@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Attendance Portal – Automated Student Attendance Monitoring & Analytics</title>
+<script>
+  // Apply saved/system theme before first paint to avoid a flash
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('attendiq_theme'); } catch (e) {}
+    if (t !== 'dark' && t !== 'light') t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ ICON SPRITE ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></symbol>
+  <symbol id="i-mark" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></symbol>
+  <symbol id="i-reports" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+  <symbol id="i-students" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></symbol>
+  <symbol id="i-print" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="M2 2l20 20"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+</svg>
+
+<!-- ============ CREATIVE LOGIN ============ -->
+<div id="login" class="login">
+  <!-- Ambient geometric canvas -->
+  <div class="login-bg" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-mesh"></div>
+  </div>
+
+  <button type="button" class="icon-btn login-theme" data-theme-toggle aria-label="Switch theme" title="Switch theme">
+    <svg class="ic ic-moon"><use href="#i-moon"/></svg><svg class="ic ic-sun"><use href="#i-sun"/></svg>
+  </button>
+
+  <div class="login-stage">
+    <!-- Left Editorial Showcase -->
+    <section class="login-editorial">
+      <div class="ed-top">
+        <div class="side-brand"><span class="mark">S</span><span>Smart Attendance Portal</span></div>
+      </div>
+
+      <div class="ed-hero">
+        <p class="ed-kicker">Precision Academic Tracking</p>
+        <h1>Every lecture,<br>accounted for.</h1>
+        <p class="ed-lead">A distraction-free attendance ledger built for faculty and academic coordinators. Mark sessions rapidly, monitor threshold compliance, and generate instant shortage notices.</p>
+      </div>
+
+      <div class="ed-pillars">
+        <div class="pillar">
+          <span class="pillar-num">01</span>
+          <div>
+            <strong>Instant Roll Check-in</strong>
+            <span>Keyboard-first roll entry with single-click status toggles.</span>
+          </div>
+        </div>
+        <div class="pillar">
+          <span class="pillar-num">02</span>
+          <div>
+            <strong>Threshold Intelligence</strong>
+            <span>Automatic calculation of exact classes needed to clear 75%.</span>
+          </div>
+        </div>
+        <div class="pillar">
+          <span class="pillar-num">03</span>
+          <div>
+            <strong>Zero-Server Privacy</strong>
+            <span>All records stay local in your browser with one-click JSON backups.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Interactive Pass Card -->
+    <section class="login-gate">
+      <form id="loginForm" class="pass-card" autocomplete="off">
+        <div class="pass-notch" aria-hidden="true"></div>
+        <div class="pass-head">
+          <div>
+            <span class="pass-tag" id="greet">Welcome back</span>
+            <h2>Sign in to Portal</h2>
+          </div>
+          <div class="pass-seal" title="Verified Institutional Access">
+            <svg class="ic"><use href="#i-shield"/></svg>
+          </div>
+        </div>
+
+        <!-- Role Selector Tabs -->
+        <div class="role-tabs" role="tablist" aria-label="Quick role fill">
+          <button type="button" class="role-tab" data-fill="admin|admin123" role="tab">
+            <span class="rt-title">Admin Pass</span>
+            <span class="rt-sub">Full access</span>
+          </button>
+          <button type="button" class="role-tab" data-fill="faculty|faculty123" role="tab">
+            <span class="rt-title">Faculty Pass</span>
+            <span class="rt-sub">Mark &amp; Reports</span>
+          </button>
+        </div>
+
+        <div class="field-group">
+          <label for="loginUser">Username
+            <input id="loginUser" type="text" placeholder="e.g. admin or faculty" required>
+          </label>
+          <label for="loginPass">Password
+            <span class="pw">
+              <input id="loginPass" type="password" placeholder="••••••••" required>
+              <button type="button" id="pwToggle" class="pw-btn" aria-label="Show password" title="Show password">
+                <svg class="ic ic-eye"><use href="#i-eye"/></svg>
+                <svg class="ic ic-eyeoff"><use href="#i-eyeoff"/></svg>
+              </button>
+            </span>
+          </label>
+        </div>
+
+        <div id="loginErr" class="error" role="alert" hidden></div>
+
+        <button class="btn primary block sign-btn" type="submit">
+          <span>Enter Workspace</span>
+          <svg class="ic"><use href="#i-arrow"/></svg>
+        </button>
+
+        <div class="pass-foot">
+          <span>Click a role pass above to auto-fill credentials</span>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="app" hidden>
+  <aside class="sidebar">
+    <div class="brand"><span class="mark">S</span><span>Smart Attendance Portal</span></div>
+    <nav id="nav" aria-label="Main">
+      <button data-view="dashboard" class="active"><svg class="ic"><use href="#i-dashboard"/></svg><span>Dashboard</span></button>
+      <button data-view="mark"><svg class="ic"><use href="#i-mark"/></svg><span>Mark attendance</span></button>
+      <button data-view="reports"><svg class="ic"><use href="#i-reports"/></svg><span>Reports and analytics</span></button>
+      <div class="nav-sep" data-admin></div>
+      <button data-view="students" data-admin><svg class="ic"><use href="#i-students"/></svg><span>Students</span></button>
+      <button data-view="settings" data-admin><svg class="ic"><use href="#i-settings"/></svg><span>Settings</span></button>
+    </nav>
+    <div class="user-box">
+      <span id="userAvatar" class="avatar">A</span>
+      <div class="user-meta"><strong id="userName"></strong><span id="userRole"></span></div>
+      <button id="logoutBtn" class="icon-btn ghost" aria-label="Log out" title="Log out"><svg class="ic"><use href="#i-logout"/></svg></button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h2 id="viewTitle">Dashboard</h2>
+        <p id="viewSub" class="muted"></p>
+      </div>
+      <div class="top-actions">
+        <span class="chip"><svg class="ic"><use href="#i-calendar"/></svg><span id="todayLabel"></span></span>
+        <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch theme" title="Switch theme">
+          <svg class="ic ic-moon"><use href="#i-moon"/></svg><svg class="ic ic-sun"><use href="#i-sun"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view">
+      <div class="summary">
+        <div class="stat">
+          <span class="stat-label"><svg class="ic"><use href="#i-users"/></svg>Total students</span>
+          <span class="stat-value" id="stTotal">0</span>
+          <span class="stat-sub">across all departments</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label"><svg class="ic"><use href="#i-trend"/></svg>Overall attendance</span>
+          <span class="stat-value" id="stOverall">0%</span>
+          <span class="stat-sub">all sessions to date</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label"><svg class="ic"><use href="#i-calendar"/></svg>Today</span>
+          <span class="stat-value" id="stToday">—</span>
+          <span class="stat-sub" id="stTodaySub"></span>
+        </div>
+        <div class="stat alert">
+          <span class="stat-label"><svg class="ic"><use href="#i-alert"/></svg>Below minimum</span>
+          <span class="stat-value" id="stLow">0</span>
+          <span class="stat-sub" id="stLowSub"></span>
+        </div>
+      </div>
+
+      <div class="grid-main">
+        <div class="card">
+          <h3>Attendance trend <span class="muted note">last 14 session days</span></h3>
+          <div class="chart"><canvas id="chTrend"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>Student status</h3>
+          <div class="donut-wrap">
+            <div class="chart donut"><canvas id="chDonut"></canvas></div>
+            <ul id="donutLegend" class="legend"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="stack">
+          <div class="card">
+            <h3>By department</h3>
+            <div class="chart"><canvas id="chDept"></canvas></div>
+          </div>
+          <div class="card">
+            <h3>Key insights</h3>
+            <ul id="insights" class="insights"></ul>
+          </div>
+        </div>
+        <div class="card">
+          <h3>By subject <span class="muted note">dashed line is the minimum</span></h3>
+          <div class="chart"><canvas id="chSubject"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card flush">
+        <div class="card-pad"><h3>Students below the minimum <span class="muted note">lowest first, top 10</span></h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Roll no</th><th>Name</th><th>Dept</th><th>Attendance</th><th>Attended / held</th><th>Classes needed</th></tr></thead>
+            <tbody id="alertBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- MARK ATTENDANCE -->
+    <section id="view-mark" class="view" hidden>
+      <div class="card">
+        <div class="filters">
+          <label>Department <select id="mDept"></select></label>
+          <label>Subject <select id="mSubject"></select></label>
+          <label>Date <input type="date" id="mDate"></label>
+          <label class="grow">Search students <input type="search" id="mSearch" placeholder="Name or roll number"></label>
+        </div>
+        <div class="checkin">
+          <label class="grow"><span class="inline-ic"><svg class="ic"><use href="#i-zap"/></svg>Quick check-in</span>
+            <input id="mCheckin" type="text" placeholder="Type or scan a roll number and press Enter, e.g. CSE21003">
+          </label>
+          <span class="muted small">Tip: choose “All absent” first, then check students in as they arrive.</span>
+        </div>
+      </div>
+
+      <div class="card flush">
+        <div class="card-pad mark-head">
+          <div class="status-row">
+            <span id="mBadge" class="badge">New session</span>
+            <span class="pill p">Present <b id="cP">0</b></span>
+            <span class="pill l">Late <b id="cL">0</b></span>
+            <span class="pill a">Absent <b id="cA">0</b></span>
+          </div>
+          <div class="btn-row">
+            <button class="btn small" id="allP">All present</button>
+            <button class="btn small" id="allA">All absent</button>
+            <button class="btn primary" id="saveAtt"><svg class="ic"><use href="#i-save"/></svg>Save attendance</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Roll no</th><th>Name</th><th>Sem</th><th>Status</th></tr></thead>
+            <tbody id="markBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section id="view-reports" class="view" hidden>
+      <div class="card">
+        <div class="filters">
+          <label>Department <select id="rDept"></select></label>
+          <label>Subject <select id="rSubject"></select></label>
+          <label>Show <select id="rStatus">
+            <option value="all">All students</option>
+            <option value="short">Shortage only</option>
+            <option value="ok">Meeting the minimum</option>
+          </select></label>
+          <label>Sort by <select id="rSort">
+            <option value="roll">Roll number</option>
+            <option value="low">Lowest attendance</option>
+            <option value="high">Highest attendance</option>
+          </select></label>
+          <label class="grow">Search students <input type="search" id="rSearch" placeholder="Name or roll number"></label>
+        </div>
+      </div>
+      <div class="card flush">
+        <div class="card-pad mark-head">
+          <div id="rSummary" class="muted"></div>
+          <div class="btn-row wrap">
+            <button class="btn small" id="exportCsv"><svg class="ic"><use href="#i-download"/></svg>Export CSV</button>
+            <button class="btn small" id="exportNotices"><svg class="ic"><use href="#i-mail"/></svg>Shortage notices</button>
+            <button class="btn small" id="printBtn"><svg class="ic"><use href="#i-print"/></svg>Print</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Roll no</th><th>Name</th><th>Dept</th><th>Attended</th><th>Held</th><th>Attendance</th><th>Status</th><th>Classes needed</th></tr></thead>
+            <tbody id="reportBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" id="detailCard" hidden>
+        <h3 id="detailTitle">Student detail</h3>
+        <div class="chart"><canvas id="chDetail"></canvas></div>
+      </div>
+    </section>
+
+    <!-- STUDENTS -->
+    <section id="view-students" class="view" hidden>
+      <div class="card">
+        <h3>Add a student</h3>
+        <form id="studentForm" class="filters">
+          <label>Roll no <input id="sRoll" required placeholder="CSE21009"></label>
+          <label class="grow">Full name <input id="sName" required placeholder="Student name"></label>
+          <label>Department <select id="sDept"></select></label>
+          <label>Semester <select id="sSem"></select></label>
+          <button class="btn primary" type="submit"><svg class="ic"><use href="#i-plus"/></svg>Add student</button>
+        </form>
+      </div>
+      <div class="card flush">
+        <div class="card-pad mark-head">
+          <h3 id="stuCount">Students</h3>
+          <input type="search" id="stuSearch" placeholder="Search students">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Roll no</th><th>Name</th><th>Dept</th><th>Sem</th><th></th></tr></thead>
+            <tbody id="stuBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="view-settings" class="view" hidden>
+      <div class="card narrow">
+        <h3>Minimum attendance</h3>
+        <p class="muted">Students below this percentage are marked as shortage on the dashboard and in reports.</p>
+        <div class="filters">
+          <label>Minimum (%) <input type="number" id="thInput" min="1" max="99" value="75"></label>
+          <button class="btn primary" id="thSave">Save minimum</button>
+        </div>
+      </div>
+      <div class="card narrow">
+        <h3>Data</h3>
+        <p class="muted">Everything is stored in this browser only. Download a backup before clearing data.</p>
+        <div class="btn-row wrap">
+          <button class="btn" id="backupBtn"><svg class="ic"><use href="#i-download"/></svg>Download backup</button>
+          <button class="btn" id="resetBtn"><svg class="ic"><use href="#i-reset"/></svg>Restore demo data</button>
+          <button class="btn danger" id="wipeBtn"><svg class="ic"><use href="#i-trash"/></svg>Clear all data</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">Smart Attendance Portal · Demo build, data is stored locally in this browser.</footer>
+  </main>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+<script src="script.js"></script>
+</body>
+</html>
